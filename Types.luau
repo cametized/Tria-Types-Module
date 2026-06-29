@@ -1,34 +1,10 @@
 require(game:GetService("ServerScriptService").Runtime):Init()
 --@author untroublua (@signupredirectlol), TRIA
 
---[=[
-Notes
-
-	How can I use the map instance autofill?
-Make sure your map is a model, then name the model:
-	map
-and make sure the map model is directly under workspace, instead of inside some folder or something
-
-Sorry that this was the only way i thought of to make it work
-
-	What am I doing for method annotating?
-
-I'm getting the type of a newly declared function with the given args. This is so i can add on the function documentation. Basically:
-
-typeof(--[[]] function() end)
-
-
-If there's a return type, i return nil casted to the return types
-
-typeof(--[[]] function() return nil :: any end)
-
-]=]
-
-
 -- only run module in studio edit
 if game:GetService("RunService"):IsRunning() then return nil end 
 
-type LightingConfigurable = {
+export type LightingConfigurable = {
 	Ambient: Color3?,
 	Brightness: number?,
 	ClockTime: number?,
@@ -93,7 +69,8 @@ Example:
 		function(self: MapLib, musicId: number, volume: number?, startTick: number?) end
 	),
 	GetButtonEvent: typeof(
-		--[[This method can be used to run functions once a specific button has been pressed.
+		--[[SERVER SIDED ONLY
+		This method can be used to run functions once a specific button has been pressed.
 
 Example:
 
@@ -118,7 +95,8 @@ Example:
 		function(self: MapLib, buttonId: number | string) return nil :: ButtonEventSignal? end
 	),
 	Survive: typeof(
-		--[[This method can be used to make a player survive the round without touching the ExitRegion.
+		--[[SERVER SIDED ONLY
+		This method can be used to make a player survive the round without touching the ExitRegion.
 
 Example:
 
@@ -277,6 +255,9 @@ Example:
 ‎ ‎ ‎ ‎ SkillsFeature:ToggleSliding(false)
 ‎ ‎ ‎ ‎ task.wait(5)
 ‎ ‎ ‎ ‎ SkillsFeature:ToggleSliding(true)
+
+TIP
+I think this can toggle for an individual player or for all players depending on if you use this in a server or client sided script.
 ]]
 		function(self: SkillFeature, value: boolean) end
 	),
@@ -328,7 +309,8 @@ Example:
 }
 export type TeleportFeature = {
 	Teleport: typeof(
-		--[[This function can be used to teleport players.
+		--[[CLIENT SIDED ONLY
+		This function can be used to teleport players.
 
 Example:
 ‎ ‎ ‎ ‎ --Teleports all players ingame to map.Destination and makes the camera face the front.
@@ -410,13 +392,13 @@ export type CleanupFeature = {
 		function(self: CleanupFeature, janitorName: string | number) return nil :: Janitor? end
 	),
 	GetJanitors: typeof(
-		--This method returns all the active Janitor classes.
+		-- This method returns all the active Janitor classes.
 		function(self: CleanupFeature) return {} :: { Janitor } end
 	),
 }
 export type PlayerUIFeature = {
 	LoadUI: typeof(
-	--[[
+	--[[CLIENT SIDED ONLY
 ‎ ‎ ‎ ‎ This function can be used to load a ScreenGui from the map into the players PlayerGui.
 
 ‎ ‎ ‎ ‎ Example:
@@ -435,14 +417,34 @@ export type PlayerUIFeature = {
 		function(self: PlayerUIFeature, gui: ScreenGui) end
 	)
 }
+export type SettingsFeature = {
+	GetSetting: typeof(
+		--[[CLIENT SIDED ONLY
+This function can be used to get the value of a setting under map.Settings.
+
+Example:
+
+‎ ‎ ‎ ‎ -- Changes the camera FOV to an arbitrary number and then sets it back to the saved settings value.
+‎ ‎ ‎ ‎ local SettingsFeature = MapLib:GetFeature("Settings")
+
+‎ ‎ ‎ ‎ local camera = workspace.CurrentCamera
+
+‎ ‎ ‎ ‎ camera.FieldOFView = 120
+‎ ‎ ‎ ‎ task.wait(3)
+‎ ‎ ‎ ‎ camera.FieldOFView = SettingsFeature:GetSetting("Field Of View")
+]]
+	function(mapSetting: string) return nil :: any? end
+	)
+}
 
 export type Features = 
 	((MapLib, name: "Skills") -> SkillFeature)
+& ((MapLib, name: "PlayerUI") -> PlayerUIFeature)
+& ((MapLib, name: "Settings") -> SettingsFeature)
 & ((MapLib, name: "Players") -> PlayersFeature)
+& ((MapLib, name: "Cleanup") -> CleanupFeature)
+& ((MapLib, name: "Teleport") -> TeleportFeature)
 & ((MapLib, name: "Teleport") -> TeleportFeature)
 & ((MapLib, name: "Lighting") -> LightingFeature)
-& ((MapLib, name: "Cleanup") -> CleanupFeature)
-& ((MapLib, name: "PlayerUI") -> PlayerUIFeature)
-& ((MapLib, name: "Teleport") -> TeleportFeature)
 
 return nil
