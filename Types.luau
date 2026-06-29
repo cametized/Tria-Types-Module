@@ -179,7 +179,7 @@ Example:
 
 	GetPlayers: typeof(
 		--This method returns a table containing players currently in a map.
-		function(self: MapLib) return nil :: { Player } end
+		function(self: MapLib) return {} :: { Player } end
 	),
 	GetFeature: Features
 
@@ -195,7 +195,7 @@ export type Janitor = {
 	),
 	isJanitor: typeof(
 		-- Returns true if the given class is a Janitor, if not it returns false.
-		function(value: any) return nil :: boolean end
+		function(value: any) return false end
 	),
 
 	Give: typeof(
@@ -253,7 +253,7 @@ Janitor does not have the ability to completly clear references if they are defi
 ‎ ‎ ‎ ‎ janitor:Cleanup() -- Destroys the part and initates garbage collection
 
 ]]
-		function<T>(self: Janitor, task: T) return nil :: T end
+		function<T>(self: Janitor, task: T) return (nil :: any) :: T end
 	),
 	Cleanup: typeof(
 		-- Calls for the Janitor to cleanup up all the tasks it was given.	
@@ -308,7 +308,7 @@ Example:
 ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ TeleportFeature:Teleport(player, map.Destination.Position)
 ‎ ‎ ‎ ‎ end
 ]]
-		function(self: PlayersFeature) return nil :: {Player} end
+		function(self: PlayersFeature) return {} :: {Player} end
 	),
 	GetPlayersInRadius: typeof(
 		--[[This function can be used to get all the players which are in a radius from a position.
@@ -323,7 +323,7 @@ Example:
 ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ TeleportFeature:Teleport(player, map.Destination.Position)
 ‎ ‎ ‎ ‎ end
 ]]
-		function(self: PlayersFeature, position: Vector3, radius: number) return nil :: {Player} end
+		function(self: PlayersFeature, position: Vector3, radius: number) return {} :: {Player} end
 	)
 }
 export type TeleportFeature = {
@@ -411,7 +411,7 @@ export type CleanupFeature = {
 	),
 	GetJanitors: typeof(
 		--This method returns all the active Janitor classes.
-		function(self: CleanupFeature) return nil :: { Janitor } end
+		function(self: CleanupFeature) return {} :: { Janitor } end
 	),
 }
 export type PlayerUIFeature = {
